@@ -32,20 +32,8 @@ class ServiceProvider extends BaseServiceProvider
         ], 'config');
 
         $this->publishes([
-            __DIR__.'/../database/migrations/' => database_path('migrations'),
+            __DIR__ . '/../database/migrations/' => database_path('migrations'),
         ], 'migrations');
-    }
-
-    /**
-     * Register bindings in the container.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/synchronizer.php', 'synchronizer'
-        );
     }
 
     private function bootCommands()

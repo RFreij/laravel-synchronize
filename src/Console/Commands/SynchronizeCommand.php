@@ -49,7 +49,7 @@ class SynchronizeCommand extends Command
      */
     public function handle()
     {
-        $files = collect($this->files->files($this->directory));
+        $files = $this->synchronizer->getSynchronizations();
         $fileNames = $files->map(function ($file, $index) {
             return $file->getFileName();
         });

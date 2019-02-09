@@ -3,6 +3,7 @@
 namespace LaravelSynchronize\Console\Synchronizer;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
@@ -17,14 +18,21 @@ class Synchronizer
     protected $files;
 
     /**
+     * The Repository instance.
+     *
+     * @var \LaravelSynchronize\Console\Synchronizer\SynchronizerRepository $repository
+     */
+    protected $repository;
+
+    /**
      * Create a new controller creator command instance.
      *
      * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \LaravelSynchronize\Console\Synchronizer\SynchronizationRepository  $repository
+     * @param  \LaravelSynchronize\Console\Synchronizer\SynchronizerRepository  $repository
      * @return void
      * @author Roy Freij <info@royfreij.nl>
      */
-    public function __construct(FileSystem $files, SynchronizationRepository $repository)
+    public function __construct(FileSystem $files, SynchronizerRepository $repository)
     {
         $this->repository = $repository;
         $this->files = $files;
@@ -45,6 +53,26 @@ class Synchronizer
         return $directory;
     }
 
+    /**
+     * Get the instance of Filesystem
+     *
+     * @return \Illuminate\Filesystem\Filesystem
+     */
+    public function getFileSystem()
+    {
+        return $this->files;
+    }
+
+    /**
+     * Get all synchronization files
+     *
+     * @return \Illuminate\Support\Collection
+     * @author Roy Freij <info@royfreij.nl>
+     */
+    public function getSynchronizations(): Collection
+    {
+        return collect($this->files->files($this->getDirectory()));
+    }
     /**
      * Get the name of the synchronization stripped of the date and time.
      *
@@ -77,7 +105,7 @@ class Synchronizer
      */
     public function hasSynchronization(string $name)
     {
-        return !empty($this->files->glob($this->synchronizer->getDirectory() . "/*_*_{$rawName}.php"));
+        return !empty($this->files->glob($this->getDirectory() . "/*_*_{$name}.php"));
     }
 
     /**
@@ -106,12 +134,17 @@ class Synchronizer
         $this->files->getRequire($file);
 
         $synchronization = $this->resolve(
-            $file = $this->getSynchronizationName($file)
+            $this->getSynchronizationName($file)
         );
 
         $this->databaseTransaction($synchronization);
 
         $this->tryHandle($synchronization);
+
+        $this->repository->log(
+            $file->getFileName(),
+            $this->repository->getNextBatchNumber()
+        );
 
         $this->databaseTransaction($synchronization, false);
     }

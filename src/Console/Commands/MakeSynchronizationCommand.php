@@ -39,14 +39,14 @@ class MakeSynchronizationCommand extends GeneratorCommand
     /**
      * Create a new controller creator command instance.
      *
-     * @param  \LaravelSynchronize\Synchronizations\Synchronizer  $synchronizer
+     * @param  \LaravelSynchronize\Console\Synchronizer  $synchronizer
      * @return void
      */
     public function __construct(Synchronizer $synchronizer)
     {
         $this->synchronizer = $synchronizer;
 
-        parent::__construct();
+        parent::__construct($synchronizer->getFileSystem());
     }
 
     /**

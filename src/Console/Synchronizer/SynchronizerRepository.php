@@ -2,6 +2,7 @@
 
 namespace LaravelSynchronize\Console\Synchronizer;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\ConnectionResolver as Resolver;
 
 class SynchronizerRepository
@@ -89,7 +90,7 @@ class SynchronizerRepository
     public function log($file, $batch)
     {
         $record = ['synchronization' => $file, 'batch' => $batch];
-        $this->table()->insert($record);
+        DB::table($this->getTable())->insert($record);
     }
 
     /**
@@ -109,19 +110,7 @@ class SynchronizerRepository
      */
     public function getLastBatchNumber()
     {
-        return $this->table()->max('batch');
-    }
-
-    /**
-     * Determine if the synchronization repository exists.
-     *
-     * @return bool
-     */
-    public function repositoryExists()
-    {
-        $schema = $this->getConnection()->getSchemaBuilder();
-
-        return $schema->hasTable($this->table);
+        return DB::table($this->getTable())->max('batch');
     }
 
     /**
@@ -131,26 +120,7 @@ class SynchronizerRepository
      */
     protected function table()
     {
-        return $this->getConnection()->table($this->table)->useWritePdo();
-    }
-
-    /**
-     * Get the connection resolver instance.
-     *
-     * @return \Illuminate\Database\ConnectionResolverInterface
-     */
-    public function getConnectionResolver()
-    {
-        return $this->resolver;
-    }
-    /**
-     * Resolve the database connection instance.
-     *
-     * @return \Illuminate\Database\Connection
-     */
-    public function getConnection()
-    {
-        return $this->resolver->connection($this->connection);
+        return DB::table($this->getTable());
     }
 
     /**
@@ -163,5 +133,4 @@ class SynchronizerRepository
     {
         return config('synchronizer.table') ?? 'synchronizations';
     }
-
 }
