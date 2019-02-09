@@ -1,0 +1,21 @@
+<?php
+
+class DummyClass
+{
+    /**
+     * When enabled prevents data loss on encountering exceptions
+     *
+     * @var boolean
+     */
+    public $withTransactions = true;
+
+    /**
+     * Handle the synchronization.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        //
+    }
+}
