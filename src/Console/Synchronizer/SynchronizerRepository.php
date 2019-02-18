@@ -2,8 +2,8 @@
 
 namespace LaravelSynchronize\Console\Synchronizer;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\ConnectionResolver as Resolver;
+use Illuminate\Support\Facades\DB;
 
 class SynchronizerRepository
 {
@@ -52,21 +52,6 @@ class SynchronizerRepository
             ->orderBy('batch', 'asc')
             ->orderBy('synchronization', 'asc')
             ->pluck('synchronization')->all();
-    }
-
-    /**
-     * Create the synchronization repository data store.
-     *
-     * @return void
-     */
-    public function createRepository()
-    {
-        $schema = $this->getConnection()->getSchemaBuilder();
-        $schema->create($this->table, function ($table) {
-            $table->increments('id');
-            $table->string('synchronization');
-            $table->integer('batch');
-        });
     }
 
     /**
