@@ -20,8 +20,6 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->registerPublishments();
 
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-
         $this->bootCommands();
     }
 
