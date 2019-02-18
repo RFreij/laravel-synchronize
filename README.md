@@ -18,6 +18,7 @@ This package gives you the ability to create synchronization files and prevent y
   - [Getting started](#getting-started)
       - [Publish config](#publish-config)
       - [Publish migration](#publish-migration)
+      - [Execute migrations](#execute-migrations-1)
   - [Usage](#usage)
       - [Make command](#make-command)
       - [Synchronize command](#synchronize-command)
@@ -52,6 +53,11 @@ php artisan vendor:publish --provider="LaravelSynchronize\Providers\ServiceProvi
 This is not required, the package is already loading it's migration. However if you do want to have a different approach feel free to overwrite it.
 ```shell
 php artisan vendor:publish --provider="LaravelSynchronize\Providers\ServiceProvider" --tag="migrations"
+```
+
+#### Execute migrations
+```shell
+php artisan migrate
 ```
 
 
