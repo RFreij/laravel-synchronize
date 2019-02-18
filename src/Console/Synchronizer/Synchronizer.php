@@ -154,9 +154,9 @@ class Synchronizer
      * rollback the database changes and throw an exception.
      * Rollback will only work when $withTransactions is true
      *
-     * @param class $synchronization
+     * @param mixed $synchronization
      * @return void
-     * @throws Exception
+     * @throws \Exception
      * @author Roy Freij <info@royfreij.nl>
      */
     public function tryHandle($synchronization)

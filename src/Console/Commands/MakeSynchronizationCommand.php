@@ -11,7 +11,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
     /**
      * The Synchronizer instance.
      *
-     * @var \LaravelSynchronize\Synchronizations\Synchronizer
+     * @var \LaravelSynchronize\Console\Synchronizer\Synchronizer
      */
     protected $synchronizer;
 
@@ -39,7 +39,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
     /**
      * Create a new controller creator command instance.
      *
-     * @param  \LaravelSynchronize\Console\Synchronizer  $synchronizer
+     * @param  \LaravelSynchronize\Console\Synchronizer\Synchronizer  $synchronizer
      * @return void
      */
     public function __construct(Synchronizer $synchronizer)

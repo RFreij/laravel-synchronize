@@ -11,7 +11,7 @@ class SynchronizeCommand extends Command
     /**
      * The Synchronizer instance.
      *
-     * @var \LaravelSynchronize\Synchronizations\Synchronizer
+     * @var \LaravelSynchronize\Console\Synchronizer\Synchronizer
      */
     protected $synchronizer;
 
@@ -32,7 +32,7 @@ class SynchronizeCommand extends Command
     /**
      * Create a new controller creator command instance.
      *
-     * @param  \LaravelSynchronize\Synchronizations\Synchronizer  $synchronizer
+     * @param  \LaravelSynchronize\Console\Synchronizer\Synchronizer  $synchronizer
      * @return void
      */
     public function __construct(Synchronizer $synchronizer)
