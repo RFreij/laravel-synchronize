@@ -1,5 +1,3 @@
-### In development
-
 # Laravel Synchronize
 [![Build Status](https://travis-ci.com/RFreij/laravel-synchronize.svg?branch=master)](https://travis-ci.com/RFreij/laravel-synchronize)
 [![Downloads](https://img.shields.io/packagist/dt/netcreaties/laravel-synchronize.svg
