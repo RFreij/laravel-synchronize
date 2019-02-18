@@ -50,32 +50,34 @@ class SynchronizeCommand extends Command
     public function handle()
     {
         $files = $this->synchronizer->getSynchronizations();
-        $fileNames = $files->map(function ($file, $index) {
+        $fileNames = $files->map(function ($file) {
             return $file->getFileName();
         });
 
         $handledFiles = DB::table('synchronizations')->pluck('synchronization');
         $unHandledFiles = $fileNames->diff($handledFiles);
 
-        if ($unHandledFiles->isNotEmpty()) {
+        if (!$unHandledFiles->isNotEmpty()) {
 
-            $filesToHandle = $files->filter(function ($file) use ($unHandledFiles) {
-                return $unHandledFiles->contains($file->getFileName());
-            });
+            $this->info('No synchronizations found.');
 
-            $filesToHandle->each(function ($file) {
-
-                $this->info('Synchronising ' . $file->getFileName());
-
-                $this->synchronizer->run($file);
-
-                $this->info('Synchronized ' . $file->getFileName());
-            });
-
-            return $this->info('Synchronizations completed');
+            return;
         }
 
-        return $this->info('No synchronizations found.');
+        $filesToHandle = $files->filter(function ($file) use ($unHandledFiles) {
+            return $unHandledFiles->contains($file->getFileName());
+        });
+
+        $filesToHandle->each(function ($file) {
+
+            $this->info('Synchronising ' . $file->getFileName());
+
+            $this->synchronizer->run($file);
+
+            $this->info('Synchronized ' . $file->getFileName());
+        });
+
+        $this->info('Synchronizations completed');
     }
 
 }
