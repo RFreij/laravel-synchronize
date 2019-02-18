@@ -173,10 +173,10 @@ class Synchronizer
     }
 
     /**
-     * If class has database transactions enabled, start the transaction
+     * If the synchronization has database transactions enabled, start the transaction
      * When the handler has been run without errors, commit the changes.
      *
-     * @param class $synchronization
+     * @param mixed $synchronization
      * @param boolean $start
      * @return void
      * @author Roy Freij <info@royfreij.nl>
