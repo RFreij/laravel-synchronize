@@ -1,5 +1,3 @@
-### In development
-
 # Laravel Synchronize
 [![Build Status](https://travis-ci.com/RFreij/laravel-synchronize.svg?branch=master)](https://travis-ci.com/RFreij/laravel-synchronize)
 [![Downloads](https://img.shields.io/packagist/dt/netcreaties/laravel-synchronize.svg
@@ -50,7 +48,6 @@ php artisan vendor:publish --provider="LaravelSynchronize\Providers\ServiceProvi
 ```
 
 #### Publish migration
-This is not required, the package is already loading it's migration. However if you do want to have a different approach feel free to overwrite it.
 ```shell
 php artisan vendor:publish --provider="LaravelSynchronize\Providers\ServiceProvider" --tag="migrations"
 ```
