@@ -44,6 +44,5 @@
                 "LaravelSynchronize\\Providers\\ServiceProvider"
             ]
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
