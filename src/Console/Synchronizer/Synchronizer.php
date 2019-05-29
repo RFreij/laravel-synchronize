@@ -82,6 +82,8 @@ class Synchronizer
      */
     public function getSynchronizationName($path)
     {
+        $path = str_replace($this->getDirectory(), '', $path);
+
         return str_replace('.php', '', implode('_', array_slice(explode('_', $path), 4)));
     }
 
