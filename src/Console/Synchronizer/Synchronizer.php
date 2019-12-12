@@ -2,10 +2,10 @@
 
 namespace LaravelSynchronize\Console\Synchronizer;
 
-use Illuminate\Support\Str;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
 
 class Synchronizer
@@ -71,7 +71,15 @@ class Synchronizer
      */
     public function getSynchronizations(): Collection
     {
-        return collect($this->files->files($this->getDirectory()));
+        return collect($this->files->files($this->getDirectory()))
+            ->filter()
+            ->values()
+            ->keyBy(function ($file) {
+                return $this->getSynchronizationName($file);
+            })
+            ->sortBy(function ($file, $key) {
+                return $key;
+            });
     }
     /**
      * Get the name of the synchronization stripped of the date and time.
@@ -84,7 +92,7 @@ class Synchronizer
     {
         $path = str_replace($this->getDirectory(), '', $path);
 
-        return str_replace('.php', '', implode('_', array_slice(explode('_', $path), 4)));
+        return str_replace('.php', '', basename($path));
     }
 
     /**
@@ -92,6 +100,8 @@ class Synchronizer
      *
      * @param  string  $name
      * @return string
+     *
+     * @deprecated not used anymore
      */
     public function getClassName(string $name)
     {
@@ -119,9 +129,9 @@ class Synchronizer
      */
     public function resolve($file)
     {
-        $class = $this->getClassName($file);
+        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
 
-        return new $class;
+        return new $class();
     }
 
     /**

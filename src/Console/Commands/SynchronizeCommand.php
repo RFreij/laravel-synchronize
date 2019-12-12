@@ -50,6 +50,7 @@ class SynchronizeCommand extends Command
     public function handle()
     {
         $files = $this->synchronizer->getSynchronizations();
+
         $fileNames = $files->map(function ($file) {
             return $file->getFileName();
         });
@@ -79,5 +80,4 @@ class SynchronizeCommand extends Command
 
         $this->info('Synchronizations completed');
     }
-
 }
