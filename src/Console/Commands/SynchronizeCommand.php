@@ -5,6 +5,7 @@ namespace LaravelSynchronize\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use LaravelSynchronize\Console\Synchronizer\Synchronizer;
+use SplFileInfo;
 
 class SynchronizeCommand extends Command
 {
@@ -20,7 +21,7 @@ class SynchronizeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'laravel-sync:synchronize';
+    protected $signature = 'laravel-sync:synchronize {--class=} {--force}';
 
     /**
      * The console command description.
@@ -33,6 +34,7 @@ class SynchronizeCommand extends Command
      * Create a new controller creator command instance.
      *
      * @param  \LaravelSynchronize\Console\Synchronizer\Synchronizer  $synchronizer
+     *
      * @return void
      */
     public function __construct(Synchronizer $synchronizer)
@@ -49,28 +51,35 @@ class SynchronizeCommand extends Command
      */
     public function handle()
     {
+        $forced = $this->option('force');
+        $class = $this->option('class');
         $files = $this->synchronizer->getSynchronizations();
 
         $fileNames = $files->map(function ($file) {
             return $file->getFileName();
         });
 
-        $handledFiles = DB::table('synchronizations')->pluck('synchronization');
-        $unHandledFiles = $fileNames->diff($handledFiles);
+        if ($forced) {
+            $filesToHandle = $files->filter(function ($file) use ($class) {
+                return !$class || ($class && $class === $this->getClassName($file));
+            });
+        } else {
+            $handledFiles = DB::table(config('synchronizer.table'))->pluck('synchronization');
+            $unHandledFiles = $fileNames->diff($handledFiles);
 
-        if (!$unHandledFiles->isNotEmpty()) {
+            $filesToHandle = $files->filter(function ($file) use ($unHandledFiles, $class) {
+                return $unHandledFiles->contains($file->getFileName())
+                    && (!$class || ($class === $this->getClassName($file)));
+            });
+        }
 
+        if ($filesToHandle->isEmpty()) {
             $this->info('No synchronizations found.');
 
             return;
         }
 
-        $filesToHandle = $files->filter(function ($file) use ($unHandledFiles) {
-            return $unHandledFiles->contains($file->getFileName());
-        });
-
         $filesToHandle->each(function ($file) {
-
             $this->info('Synchronising ' . $file->getFileName());
 
             $this->synchronizer->run($file);
@@ -79,5 +88,19 @@ class SynchronizeCommand extends Command
         });
 
         $this->info('Synchronizations completed');
+    }
+
+    /**
+     * Get class name for file
+     *
+     * @param SplFileInfo $file
+     *
+     * @return string
+     */
+    private function getClassName(SplFileInfo $file)
+    {
+        return $this->synchronizer->getClassName(
+            $this->synchronizer->getSynchronizationName($file->getFilename())
+        );
     }
 }

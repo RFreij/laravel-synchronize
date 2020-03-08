@@ -29,8 +29,8 @@ class Synchronizer
      *
      * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  \LaravelSynchronize\Console\Synchronizer\SynchronizerRepository  $repository
+     *
      * @return void
-     * @author Roy Freij <info@royfreij.nl>
      */
     public function __construct(FileSystem $files, SynchronizerRepository $repository)
     {
@@ -43,7 +43,6 @@ class Synchronizer
      * It will be created if the directive doesn't exist.
      *
      * @return string
-     * @author Roy Freij <info@royfreij.nl>
      */
     public function getDirectory()
     {
@@ -67,7 +66,6 @@ class Synchronizer
      * Get all synchronization files
      *
      * @return \Illuminate\Support\Collection
-     * @author Roy Freij <info@royfreij.nl>
      */
     public function getSynchronizations(): Collection
     {
@@ -81,12 +79,13 @@ class Synchronizer
                 return $key;
             });
     }
+
     /**
      * Get the name of the synchronization stripped of the date and time.
      *
      * @param  string  $path
+     *
      * @return string
-     * @author Roy Freij <info@royfreij.nl>
      */
     public function getSynchronizationName($path)
     {
@@ -98,22 +97,21 @@ class Synchronizer
     /**
      * Get the class name of a synchronization name.
      *
-     * @param  string  $name
-     * @return string
+     * @param  string  $fileName
      *
-     * @deprecated not used anymore
+     * @return string
      */
-    public function getClassName(string $name)
+    public function getClassName(string $fileName)
     {
-        return Str::studly($name);
+        return Str::studly(implode('_', array_slice(explode('_', $fileName), 4)));
     }
 
     /**
      * Determine if a synchronization exists with given name
      *
      * @param string $name
+     *
      * @return boolean
-     * @author Roy Freij <info@royfreij.nl>
      */
     public function hasSynchronization(string $name)
     {
@@ -123,13 +121,13 @@ class Synchronizer
     /**
      * Resolve a synchronization instance from a file.
      *
-     * @param  string  $file
+     * @param  string  $fileName
+     *
      * @return object
-     * @author Roy Freij <info@royfreij.nl>
      */
-    public function resolve($file)
+    public function resolve($fileName)
     {
-        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
+        $class = $this->getClassName($fileName);
 
         return new $class();
     }
@@ -138,8 +136,8 @@ class Synchronizer
      * include the file with Require and call the class it's handler
      *
      * @param  \Symfony\Component\Finder\SplFileInfo $file
+     *
      * @return void
-     * @author Roy Freij <info@royfreij.nl>
      */
     public function run(SplFileInfo $file)
     {
@@ -149,7 +147,7 @@ class Synchronizer
             $this->getSynchronizationName($file)
         );
 
-        $this->databaseTransaction($synchronization);
+        $this->startTransaction($synchronization);
 
         $this->tryHandle($synchronization);
 
@@ -158,7 +156,7 @@ class Synchronizer
             $this->repository->getNextBatchNumber()
         );
 
-        $this->databaseTransaction($synchronization, false);
+        $this->commitTransaction($synchronization);
     }
 
     /**
@@ -167,18 +165,20 @@ class Synchronizer
      * Rollback will only work when $withTransactions is true
      *
      * @param mixed $synchronization
+     *
      * @return void
+     *
      * @throws \Exception
-     * @author Roy Freij <info@royfreij.nl>
      */
     public function tryHandle($synchronization)
     {
         try {
             $synchronization->handle();
-
         } catch (\Exception $exception) {
 
-            DB::rollBack();
+            if ($synchronization->withTransactions) {
+                DB::rollBack();
+            }
 
             throw $exception;
         }
@@ -186,17 +186,29 @@ class Synchronizer
 
     /**
      * If the synchronization has database transactions enabled, start the transaction
-     * When the handler has been run without errors, commit the changes.
      *
      * @param mixed $synchronization
-     * @param boolean $start
+     *
      * @return void
-     * @author Roy Freij <info@royfreij.nl>
      */
-    private function databaseTransaction($synchronization, $start = true)
+    private function startTransaction($synchronization)
     {
         if ($synchronization->withTransactions) {
-            $start ? DB::beginTransaction() : DB::commit();
+            DB::beginTransaction();
+        }
+    }
+
+    /**
+     * If the synchronization has database transactions enabled, commit the transaction.
+     *
+     * @param mixed $synchronization
+     *
+     * @return void
+     */
+    private function commitTransaction($synchronization)
+    {
+        if ($synchronization->withTransactions) {
+            DB::commit();
         }
     }
 
@@ -204,7 +216,6 @@ class Synchronizer
      * Get default directive synchronizations are stored
      *
      * @return string
-     * @author Roy Freij <info@royfreij.nl>
      */
     private function getDefaultDirectory()
     {

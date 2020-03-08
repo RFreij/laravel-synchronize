@@ -2,8 +2,8 @@
 
 namespace LaravelSynchronize\Console\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
 use LaravelSynchronize\Console\Synchronizer\Synchronizer;
 
 class MakeSynchronizationCommand extends GeneratorCommand
@@ -40,6 +40,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
      * Create a new controller creator command instance.
      *
      * @param  \LaravelSynchronize\Console\Synchronizer\Synchronizer  $synchronizer
+     *
      * @return void
      */
     public function __construct(Synchronizer $synchronizer)
@@ -74,6 +75,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
      * Determine if the class already exists.
      *
      * @param  string  $rawName
+     *
      * @return bool
      */
     protected function alreadyExists($rawName)
@@ -85,11 +87,12 @@ class MakeSynchronizationCommand extends GeneratorCommand
      * Get the destination class path.
      *
      * @param  string  $name
+     *
      * @return string
      */
     protected function getPath($name)
     {
-        return $this->synchronizer->getDirectory() . '/' . $this->getDatePrefix() . '_' . $name  . '.php';
+        return $this->synchronizer->getDirectory() . '/' . $this->getDatePrefix() . '_' . Str::studly($name) . '.php';
     }
 
     /**
