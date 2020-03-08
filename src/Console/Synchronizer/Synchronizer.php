@@ -175,7 +175,6 @@ class Synchronizer
         try {
             $synchronization->handle();
         } catch (\Exception $exception) {
-
             if ($synchronization->withTransactions) {
                 DB::rollBack();
             }

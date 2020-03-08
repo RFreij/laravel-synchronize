@@ -61,7 +61,6 @@ class MakeSynchronizationCommand extends GeneratorCommand
         $path = $this->getPath($this->getNameInput());
 
         if ($this->alreadyExists($this->getNameInput())) {
-
             $this->error($this->type . ' already exists!');
 
             return false;
@@ -114,5 +113,4 @@ class MakeSynchronizationCommand extends GeneratorCommand
     {
         return date('Y_m_d_His');
     }
-
 }
