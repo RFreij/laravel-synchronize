@@ -4,6 +4,7 @@
 [![Downloads](https://img.shields.io/packagist/dt/netcreaties/laravel-synchronize.svg)](https://packagist.org/packages/netcreaties/laravel-synchronize)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/RFreij/laravel-synchronize/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/RFreij/laravel-synchronize/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/RFreij/laravel-synchronize/?branch=master)
+[![StyleCi](https://github.styleci.io/repos/169822460/shield?branch=master)](https://github.styleci.io/repos/169822460/shield?branch=master)
 
 This package gives you the ability to create synchronization files and prevent you from having to write one time use commands when you've got for example: A database structure change that will require you to synchronize the old structure data with the new structure.
 
