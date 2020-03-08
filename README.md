@@ -46,7 +46,7 @@ This package supports package discovery.
 
 ## Getting started
 
-#### Publish config
+#### Publish config (optional)
 
 Publishing the config will enable you to overwrite some of the settings this package uses. For example you can define where synchronization files should be stored.
 
