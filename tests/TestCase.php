@@ -7,5 +7,6 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication, MockeryPHPUnitIntegration;
+    use CreatesApplication;
+    use MockeryPHPUnitIntegration;
 }
