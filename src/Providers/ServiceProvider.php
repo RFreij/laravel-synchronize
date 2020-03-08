@@ -31,7 +31,8 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            $this->getDefaultConfigFilePath('synchronizer'), 'synchronizer'
+            $this->getDefaultConfigFilePath('synchronizer'),
+            'synchronizer'
         );
     }
 

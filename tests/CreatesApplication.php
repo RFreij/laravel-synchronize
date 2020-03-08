@@ -23,7 +23,7 @@ trait CreatesApplication
         parent::setUp();
         $this->artisan('migrate', ['--database' => 'sqlite']);
         $this->loadLaravelMigrations(['--database' => 'sqlite']);
-        $this->withFactories(__DIR__.'/factories');
+        $this->withFactories(__DIR__ . '/factories');
     }
 
     /**

@@ -8,7 +8,8 @@ use Hash;
 
 abstract class BrowserKitTestCase extends BaseTestCase
 {
-    use CreatesApplication, MockeryPHPUnitIntegration;
+    use CreatesApplication;
+    use MockeryPHPUnitIntegration;
 
     public $baseUrl = 'http://localhost';
 }
