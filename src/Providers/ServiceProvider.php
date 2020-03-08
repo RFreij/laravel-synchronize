@@ -23,6 +23,23 @@ class ServiceProvider extends BaseServiceProvider
         $this->bootCommands();
     }
 
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->mergeConfigFrom(
+            $this->getDefaultConfigFilePath('synchronizer'), 'synchronizer'
+        );
+    }
+
+    /**
+     * Register publishments
+     *
+     * @return void
+     */
     protected function registerPublishments()
     {
         $this->publishes([
@@ -34,6 +51,21 @@ class ServiceProvider extends BaseServiceProvider
         ], 'migrations');
     }
 
+    /**
+     * Get default configuration file path
+     *
+     * @return string
+     */
+    public function getDefaultConfigFilePath($configName)
+    {
+        return realpath(__DIR__ . "/../config/{$configName}.php");
+    }
+
+    /**
+     * Boot commands
+     *
+     * @return void
+     */
     private function bootCommands()
     {
         if ($this->app->runningInConsole()) {

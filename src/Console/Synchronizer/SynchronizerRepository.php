@@ -14,6 +14,7 @@ class SynchronizerRepository
      * @var \Illuminate\Database\ConnectionResolver
      */
     protected $resolver;
+
     /**
      * The name of the synchronizations table.
      *
@@ -33,6 +34,7 @@ class SynchronizerRepository
      *
      * @param  \Illuminate\Database\ConnectionResolver  $resolver
      * @param  string  $table
+     *
      * @return void
      */
     public function __construct(Resolver $resolver)
@@ -62,6 +64,7 @@ class SynchronizerRepository
     public function getLast()
     {
         $query = $this->table()->where('batch', $this->getLastBatchNumber());
+
         return $query->orderBy('synchronization', 'desc')->get()->all();
     }
 
@@ -70,12 +73,15 @@ class SynchronizerRepository
      *
      * @param  string  $file
      * @param  int     $batch
+     *
      * @return void
      */
     public function log($file, $batch)
     {
-        $record = ['synchronization' => $file, 'batch' => $batch];
-        DB::table($this->getTable())->insert($record);
+        $record = ['synchronization' => $file];
+        DB::table($this->getTable())->updateOrInsert($record, [
+            'batch' => $batch,
+        ]);
     }
 
     /**
@@ -112,7 +118,6 @@ class SynchronizerRepository
      * Retrieve the table where synchronizations are being stored
      *
      * @return string
-     * @author Roy Freij <info@royfreij.nl>
      */
     private function getTable()
     {
