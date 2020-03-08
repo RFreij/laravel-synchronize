@@ -80,7 +80,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
      */
     protected function alreadyExists($rawName)
     {
-        return $this->synchronizer->hasSynchronization($rawName);
+        return $this->synchronizer->hasSynchronization(Str::studly($rawName));
     }
 
     /**
