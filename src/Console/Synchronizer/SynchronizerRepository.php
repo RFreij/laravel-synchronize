@@ -78,8 +78,10 @@ class SynchronizerRepository
      */
     public function log($file, $batch)
     {
-        $record = ['synchronization' => $file, 'batch' => $batch];
-        DB::table($this->getTable())->insert($record);
+        $record = ['synchronization' => $file];
+        DB::table($this->getTable())->updateOrInsert($record, [
+            'batch' => $batch,
+        ]);
     }
 
     /**
