@@ -2,10 +2,10 @@
 
 namespace LaravelSynchronize\Console\Synchronizer;
 
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
 
 class Synchronizer
@@ -136,10 +136,11 @@ class Synchronizer
      * include the file with Require and call the class it's handler
      *
      * @param  \Symfony\Component\Finder\SplFileInfo $file
+     * @param  string $operation
      *
      * @return void
      */
-    public function run(SplFileInfo $file)
+    public function run(SplFileInfo $file, string $operation)
     {
         $this->files->getRequire($file);
 
@@ -149,11 +150,12 @@ class Synchronizer
 
         $this->startTransaction($synchronization);
 
-        $this->tryHandle($synchronization);
+        $this->tryHandle($synchronization, $operation);
 
         $this->repository->log(
             $file->getFileName(),
-            $this->repository->getNextBatchNumber()
+            $this->repository->getNextBatchNumber(),
+            $operation
         );
 
         $this->commitTransaction($synchronization);
@@ -165,15 +167,20 @@ class Synchronizer
      * Rollback will only work when $withTransactions is true
      *
      * @param mixed $synchronization
+     * @param string $operation
      *
      * @return void
      *
      * @throws \Exception
      */
-    public function tryHandle($synchronization)
+    public function tryHandle($synchronization, string $operation)
     {
         try {
-            $synchronization->handle();
+            if ($operation === 'up') {
+                $synchronization->up();
+            } else {
+                $synchronization->down();
+            }
         } catch (\Exception $exception) {
             if ($synchronization->withTransactions) {
                 DB::rollBack();

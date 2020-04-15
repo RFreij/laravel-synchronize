@@ -10,11 +10,21 @@ class DummyClass
     public $withTransactions = true;
 
     /**
-     * Handle the synchronization.
+     * Run the synchronization.
      *
      * @return void
      */
-    public function handle()
+    public function up()
+    {
+        //
+    }
+
+    /**
+     * Rollback the synchronization.
+     *
+     * @return void
+     */
+    public function down()
     {
         //
     }

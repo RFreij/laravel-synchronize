@@ -71,6 +71,8 @@ php artisan migrate
 
 ## Usage
 
+Laravel Synchronize executes synchronizations that have the same class name as the migration class name, but with a Synchronization suffix, when executing migrations. This is the advised usage to ensure database integrity, but it is possible to execute synchronizations on their own (see section Synchronize command).
+
 #### Make command
 
 ```shell
@@ -82,14 +84,14 @@ Creates the synchronization file at `database/synchronizations`
 #### Synchronize command
 
 ```shell
-php artisan laravel-sync:synchronize
+php artisan synchronize
 ```
 
 #### Using --class and --force
 
 It can happen you need a synchronization before you can perform a migration. Using --class and --force can help you achieving that goal.
 
-All you need to do is using the Laravel 5.8.16+ Migration events, or simply call them in the up or down method when lower.
+All you need to do is using the Laravel 5.8.16+ Migration events.
 
 Example:
 
@@ -98,7 +100,7 @@ Example:
     {
         Event::listen(MigrationStarted::class, function (MigrationStarted $listener) {
             if ($listener->migration instanceof $this && $listener->method === 'up') {
-                Artisan::call('laravel-sync:synchronize --class=TestASync --force');
+                Artisan::call('synchronize --class=TestASync --force');
                 echo Artisan::output();
             }
         });
