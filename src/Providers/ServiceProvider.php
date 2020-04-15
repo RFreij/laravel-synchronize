@@ -2,9 +2,9 @@
 
 namespace LaravelSynchronize\Providers;
 
+use LaravelSynchronize\Console\Commands\SynchronizeCommand;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use LaravelSynchronize\Console\Commands\MakeSynchronizationCommand;
-use LaravelSynchronize\Console\Commands\SynchronizeCommand;
 
 /**
  * Service provider
@@ -34,6 +34,8 @@ class ServiceProvider extends BaseServiceProvider
             $this->getDefaultConfigFilePath('synchronizer'),
             'synchronizer'
         );
+
+        $this->app->register(LaravelSynchronizeEventServiceProvider::class);
     }
 
     /**

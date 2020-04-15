@@ -2,8 +2,8 @@
 
 namespace LaravelSynchronize\Console\Commands;
 
-use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
+use Illuminate\Console\GeneratorCommand;
 use LaravelSynchronize\Console\Synchronizer\Synchronizer;
 
 class MakeSynchronizationCommand extends GeneratorCommand
@@ -57,7 +57,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
      */
     public function handle()
     {
-        $name = $this->qualifyClass(Str::studly($this->getNameInput()));
+        $name = $this->qualifyClass(Str::studly($this->getNameInput() . 'Synchronization'));
         $path = $this->getPath($this->getNameInput());
 
         if ($this->alreadyExists($this->getNameInput())) {

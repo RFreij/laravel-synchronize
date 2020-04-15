@@ -2,7 +2,10 @@
     "name": "netcreaties/laravel-synchronize",
     "description": "Laravel Synchronizations will enable you to create one time synchronizations and prevent creating commands you only use once",
     "type": "library",
-    "keywords": ["laravel","lumen"],
+    "keywords": [
+        "laravel",
+        "lumen"
+    ],
     "require": {},
     "require-dev": {
         "matthewbdaly/artisan-standalone": "0.0.*",
@@ -21,6 +24,10 @@
         {
             "name": "Roy Freij",
             "email": "info@royfreij.nl"
+        },
+        {
+            "name": "Ramon Bakker",
+            "email": "ramon@bsbip.com"
         }
     ],
     "autoload": {

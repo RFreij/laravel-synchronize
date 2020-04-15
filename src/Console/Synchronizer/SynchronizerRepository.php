@@ -2,8 +2,9 @@
 
 namespace LaravelSynchronize\Console\Synchronizer;
 
-use Illuminate\Database\ConnectionResolver as Resolver;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\ConnectionResolver as Resolver;
 
 class SynchronizerRepository
 {
@@ -48,7 +49,7 @@ class SynchronizerRepository
      *
      * @return array
      */
-    public function getRan()
+    public function getRan(): array
     {
         return $this->table()
             ->orderBy('batch', 'asc')
@@ -61,7 +62,7 @@ class SynchronizerRepository
      *
      * @return array
      */
-    public function getLast()
+    public function getLast(): array
     {
         $query = $this->table()->where('batch', $this->getLastBatchNumber());
 
@@ -73,15 +74,22 @@ class SynchronizerRepository
      *
      * @param  string  $file
      * @param  int     $batch
+     * @param  string  $operation
      *
      * @return void
      */
-    public function log($file, $batch)
+    public function log(string $file, int $batch, string $operation): void
     {
         $record = ['synchronization' => $file];
-        DB::table($this->getTable())->updateOrInsert($record, [
-            'batch' => $batch,
-        ]);
+
+        DB::table($this->getTable())
+            ->when($operation === 'up', function ($query) use ($record, $batch) {
+                $query->updateOrInsert($record, [
+                    'batch' => $batch,
+                ]);
+            }, function ($query) use ($file) {
+                $query->where('synchronization', $file)->delete();
+            });
     }
 
     /**
@@ -89,7 +97,7 @@ class SynchronizerRepository
      *
      * @return int
      */
-    public function getNextBatchNumber()
+    public function getNextBatchNumber(): int
     {
         return $this->getLastBatchNumber() + 1;
     }
@@ -99,9 +107,9 @@ class SynchronizerRepository
      *
      * @return int
      */
-    public function getLastBatchNumber()
+    public function getLastBatchNumber(): int
     {
-        return DB::table($this->getTable())->max('batch');
+        return DB::table($this->getTable())->max('batch') ?? 0;
     }
 
     /**
@@ -109,7 +117,7 @@ class SynchronizerRepository
      *
      * @return \Illuminate\Database\Query\Builder
      */
-    protected function table()
+    protected function table(): Builder
     {
         return DB::table($this->getTable());
     }
@@ -119,7 +127,7 @@ class SynchronizerRepository
      *
      * @return string
      */
-    private function getTable()
+    private function getTable(): string
     {
         return config('synchronizer.table') ?? 'synchronizations';
     }

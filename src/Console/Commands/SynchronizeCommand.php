@@ -2,10 +2,11 @@
 
 namespace LaravelSynchronize\Console\Commands;
 
+use SplFileInfo;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 use LaravelSynchronize\Console\Synchronizer\Synchronizer;
-use SplFileInfo;
 
 class SynchronizeCommand extends Command
 {
@@ -21,7 +22,7 @@ class SynchronizeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'laravel-sync:synchronize {--class=} {--force}';
+    protected $signature = 'synchronize {--class=} {--force}';
 
     /**
      * The console command description.
@@ -64,7 +65,7 @@ class SynchronizeCommand extends Command
                 return !$class || ($class && $class === $this->getClassName($file));
             });
         } else {
-            $handledFiles = DB::table(config('synchronizer.table'))->pluck('synchronization');
+            $handledFiles = DB::table(Config::get('synchronizer.table'))->pluck('synchronization');
             $unHandledFiles = $fileNames->diff($handledFiles);
 
             $filesToHandle = $files->filter(function ($file) use ($unHandledFiles, $class) {
@@ -80,11 +81,11 @@ class SynchronizeCommand extends Command
         }
 
         $filesToHandle->each(function ($file) {
-            $this->info('Synchronising ' . $file->getFileName());
+            $this->info('Synchronizing: ' . $file->getFileName());
 
-            $this->synchronizer->run($file);
+            $this->synchronizer->run($file, 'up');
 
-            $this->info('Synchronized ' . $file->getFileName());
+            $this->info('Synchronized: ' . $file->getFileName());
         });
 
         $this->info('Synchronizations completed');
@@ -97,7 +98,7 @@ class SynchronizeCommand extends Command
      *
      * @return string
      */
-    private function getClassName(SplFileInfo $file)
+    private function getClassName(SplFileInfo $file): string
     {
         return $this->synchronizer->getClassName(
             $this->synchronizer->getSynchronizationName($file->getFilename())
