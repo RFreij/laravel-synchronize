@@ -2,6 +2,7 @@
 
 namespace LaravelSynchronize\Listeners;
 
+use SplFileInfo;
 use Illuminate\Database\Events\MigrationEnded;
 use LaravelSynchronize\Console\Synchronizer\Synchronizer;
 use LaravelSynchronize\Console\Synchronizer\SynchronizerRepository;
@@ -51,8 +52,8 @@ class MigrationEndedEventListener
         $handledFiles = collect($this->synchronizerRepository->getLast())
             ->pluck('synchronization');
 
-        $filesToHandle = $files->filter(function ($file) use ($handledFiles) {
-            return $handledFiles->contains($file->getFileName());
+        $filesToHandle = $files->filter(function ($file) use ($handledFiles, $class) {
+            return $handledFiles->contains($file->getFileName()) && (!$class || ($class === $this->getClassName($file)));
         });
 
         if ($filesToHandle->isEmpty()) {
@@ -68,5 +69,19 @@ class MigrationEndedEventListener
 
             echo 'Rolled back synchronization: ' . $file->getFileName() . "\n";
         });
+    }
+
+    /**
+     * Get class name for file
+     *
+     * @param SplFileInfo $file
+     *
+     * @return string
+     */
+    private function getClassName(SplFileInfo $file): string
+    {
+        return $this->synchronizer->getClassName(
+            $this->synchronizer->getSynchronizationName($file->getFilename())
+        );
     }
 }
