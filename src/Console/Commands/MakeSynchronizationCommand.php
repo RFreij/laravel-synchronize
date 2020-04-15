@@ -57,10 +57,10 @@ class MakeSynchronizationCommand extends GeneratorCommand
      */
     public function handle()
     {
-        $name = $this->qualifyClass(Str::studly($this->getNameInput() . 'Synchronization'));
-        $path = $this->getPath($this->getNameInput());
+        $name = $this->qualifyClass(Str::studly($this->getNameWithSuffix()));
+        $path = $this->getPath($this->getNameWithSuffix());
 
-        if ($this->alreadyExists($this->getNameInput())) {
+        if ($this->alreadyExists($this->getNameWithSuffix())) {
             $this->error($this->type . ' already exists!');
 
             return false;
@@ -77,9 +77,19 @@ class MakeSynchronizationCommand extends GeneratorCommand
      *
      * @return bool
      */
-    protected function alreadyExists($rawName)
+    protected function alreadyExists($rawName): bool
     {
         return $this->synchronizer->hasSynchronization(Str::studly($rawName));
+    }
+
+    /**
+     * Get the destination class name.
+     *
+     * @return string
+     */
+    protected function getNameWithSuffix(): string
+    {
+        return $this->getNameInput() . 'Synchronization';
     }
 
     /**
@@ -89,7 +99,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getPath($name)
+    protected function getPath($name): string
     {
         return $this->synchronizer->getDirectory() . '/' . $this->getDatePrefix() . '_' . Str::studly($name) . '.php';
     }
@@ -99,7 +109,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getStub()
+    protected function getStub(): string
     {
         return __DIR__ . '/stubs/Synchronization.stub';
     }
@@ -109,7 +119,7 @@ class MakeSynchronizationCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getDatePrefix()
+    protected function getDatePrefix(): string
     {
         return date('Y_m_d_His');
     }
