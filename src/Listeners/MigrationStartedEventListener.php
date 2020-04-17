@@ -2,6 +2,7 @@
 
 namespace LaravelSynchronize\Listeners;
 
+use Schema;
 use SplFileInfo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
@@ -38,6 +39,10 @@ class MigrationStartedEventListener
     {
         // Synchronizations should execute before going up
         if ($migrationStarted->method !== 'up') {
+            return;
+        }
+
+        if (!Schema::hasTable(Config::get('synchronizer.table'))) {
             return;
         }
 
